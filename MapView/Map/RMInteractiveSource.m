@@ -426,8 +426,8 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
                 {
                     FMResultSet *results = [db executeQuery:@"select key_json from grid_data where zoom_level = ? and tile_column = ? and tile_row = ? and key_name = ?", 
                                                [NSNumber numberWithShort:tilePoint.tile.zoom],
-                                               [NSNumber numberWithShort:tilePoint.tile.x],
-                                               [NSNumber numberWithShort:tilePoint.tile.y],
+                                               [NSNumber numberWithUnsignedInt:tilePoint.tile.x],
+                                               [NSNumber numberWithUnsignedInt:tilePoint.tile.y],
                                                keyName];
                     
                     if ( ! [db hadError])
