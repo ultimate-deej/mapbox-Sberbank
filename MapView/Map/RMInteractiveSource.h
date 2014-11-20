@@ -105,6 +105,8 @@ typedef enum : NSUInteger {
 - (BOOL)supportsInteractivity;
 - (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 
+-(NSDictionary*)dataInMapView:(RMMapView *)mapView forPoint:(CGPoint)point;
+
 @end
 
 #pragma mark -

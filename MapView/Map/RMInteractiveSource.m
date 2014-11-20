@@ -484,6 +484,21 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     return nil;
 }
 
+-(NSDictionary*)dataInMapView:(RMMapView *)mapView forPoint:(CGPoint)point {
+        id <RMTileSource, RMInteractiveSource>source = [mapView interactiveTileSource];
+        
+        NSDictionary *interactivityDictionary = [(id <RMInteractiveSourcePrivate>)source interactivityDictionaryForPoint:point inMapView:mapView];
+        
+        if (interactivityDictionary)
+        {
+            return [NSJSONSerialization JSONObjectWithData:[[interactivityDictionary objectForKey:@"keyJSON"] dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                      options:NSJSONReadingMutableContainers
+                                                                                        error:nil];
+        }
+    
+    return nil;
+}
+
 @end
 
 #pragma mark - Mapbox
