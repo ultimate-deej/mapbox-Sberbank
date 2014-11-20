@@ -484,7 +484,7 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     return nil;
 }
 
--(NSDictionary*)dataInMapView:(RMMapView *)mapView forPoint:(CGPoint)point {
++(NSDictionary*)dataInMapView:(RMMapView *)mapView forPoint:(CGPoint)point {
         id <RMTileSource, RMInteractiveSource>source = [mapView interactiveTileSource];
         
         NSDictionary *interactivityDictionary = [(id <RMInteractiveSourcePrivate>)source interactivityDictionaryForPoint:point inMapView:mapView];
