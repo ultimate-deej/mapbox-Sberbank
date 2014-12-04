@@ -4049,4 +4049,38 @@
                      }];
 }
 
+-(void)setMapAngleCorrection:(CGFloat)mapAngleCorrection {
+    self.mapAngleCorrection = mapAngleCorrection;
+    
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0.5];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    
+    [UIView animateWithDuration:0.5
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
+                     animations:^(void)
+     {
+         CGFloat angle = (M_PI / -180) * mapAngleCorrection;
+         
+         _mapTransform = CGAffineTransformMakeRotation(angle);
+         _annotationTransform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angle));
+         
+         _mapScrollView.transform = _mapTransform;
+         _compassButton.transform = _mapTransform;
+         _overlayView.transform   = _mapTransform;
+         
+         _compassButton.alpha = 1.0;
+         
+         for (RMAnnotation *annotation in _annotations)
+             if ([annotation.layer isKindOfClass:[RMMarker class]])
+                 annotation.layer.transform = _annotationTransform;
+         
+         [self correctPositionOfAllAnnotations];
+     }
+                     completion:nil];
+    
+    [CATransaction commit];
+}
+
 @end
