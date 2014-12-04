@@ -4050,7 +4050,7 @@
 }
 
 -(void)setMapAngleCorrection:(CGFloat)mapAngleCorrection {
-    self.mapAngleCorrection = mapAngleCorrection;
+    _mapAngleCorrection = mapAngleCorrection;
     
     [CATransaction begin];
     [CATransaction setAnimationDuration:0.5];
