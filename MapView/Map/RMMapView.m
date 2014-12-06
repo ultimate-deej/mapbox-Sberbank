@@ -79,7 +79,6 @@
 
 @property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 @property (nonatomic, retain) RMUserLocation *userLocation;
-@property (nonatomic, assign) CGFloat mapAngleCorrection;
 
 - (void)createMapView;
 
@@ -1329,7 +1328,9 @@
     NSUInteger tileSideLength = [_tileSourcesContainer tileSideLength];
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
-    _mapScrollView = [[RMMapScrollView alloc] initWithFrame:self.bounds];
+    CGRect mapFrame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.height, self.bounds.size.height);
+    _mapScrollView = [[RMMapScrollView alloc] initWithFrame:mapFrame];
+    _mapScrollView.center = self.center;
     _mapScrollView.delegate = self;
     _mapScrollView.opaque = NO;
     _mapScrollView.backgroundColor = [UIColor clearColor];
@@ -1410,7 +1411,10 @@
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
 
     [_visibleAnnotations removeAllObjects];
-    [self correctPositionOfAllAnnotations];
+    //[self correctPositionOfAllAnnotations];
+    
+#warning - next line of code is testing.
+    [self setAngleCorrection:self.mapAngleCorrection animated:NO];
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
@@ -2234,9 +2238,6 @@
     }
 
     [self setCenterProjectedPoint:centerPoint animated:NO];
-    
-#warning - next line of code is testing.
-    [self setAngleCorrection:self.mapAngleCorrection animated:NO];
 }
 
 - (void)removeTileSource:(id <RMTileSource>)tileSource
