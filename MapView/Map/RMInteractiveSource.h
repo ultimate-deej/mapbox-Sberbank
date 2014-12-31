@@ -56,11 +56,6 @@ typedef enum : NSUInteger {
 /** Returns YES if a map view supports interactivity features given its current tile sources. */
 - (BOOL)supportsInteractivity;
 
-/** Returns the HTML-formatted output for a given point on a given map view.
-*   @param outputType The type of feature info desired.
-*   @param point A point in the map view.
-*   @return The formatted feature output. */
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point;
 
 @end
 
@@ -69,7 +64,6 @@ typedef enum : NSUInteger {
 @interface RMMapView (RMInteractiveSource) <RMInteractiveMapView>
 
 - (BOOL)supportsInteractivity;
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point;
 
 @end
 
@@ -89,13 +83,6 @@ typedef enum : NSUInteger {
 /** Returns YES if a tile source supports interactivity features. */
 - (BOOL)supportsInteractivity;
 
-/** Returns the HTML-formatted output for a given point on a given map view, considering the currently active interactive tile source.
-*   @param outputType The type of feature info desired.
-*   @param point A point in the map view.
-*   @param mapView The map view being interacted with.
-*   @return The formatted feature output. */
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
-
 @end
 
 #pragma mark -
@@ -103,7 +90,6 @@ typedef enum : NSUInteger {
 @interface RMMBTilesSource (RMInteractiveSource) <RMInteractiveSource>
 
 - (BOOL)supportsInteractivity;
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 
 +(NSDictionary*)dataInMapView:(RMMapView *)mapView forPoint:(CGPoint)point;
 
@@ -114,6 +100,5 @@ typedef enum : NSUInteger {
 @interface RMMapboxSource (RMInteractiveSource) <RMInteractiveSource>
 
 - (BOOL)supportsInteractivity;
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 
 @end

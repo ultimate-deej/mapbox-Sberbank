@@ -37,8 +37,6 @@
 
 #import "FMDB.h"
 
-#import "GRMustache.h"
-
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
@@ -104,10 +102,6 @@
     return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] interactivityFormatterTemplate];
 }
 
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point
-{
-    return [(id <RMInteractiveSourcePrivate>)[self interactiveTileSource] formattedOutputOfType:outputType forPoint:point inMapView:self];
-}
 
 @end
 
@@ -184,7 +178,6 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 // made handy as class methods for convenience.
 
 + (NSString *)keyNameForPoint:(CGPoint)point inGrid:(NSDictionary *)grid;
-+ (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)type forPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 
 @end
 
@@ -235,59 +228,6 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     }
     
     return keyName;
-}
-
-+ (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView
-{
-    NSString *formattedOutput = nil;
-    
-    id <RMTileSource, RMInteractiveSource>source = [mapView interactiveTileSource];
-    
-    NSDictionary *interactivityDictionary = [(id <RMInteractiveSourcePrivate>)source interactivityDictionaryForPoint:point inMapView:mapView];
-    
-    if (interactivityDictionary)
-    {
-        // As of UTFGrid 1.2, JavaScript formatters are no longer supported. We 
-        // prefer Mustache-based templating instead for security reasons.
-        //
-        // More on Mustache: http://mustache.github.com
-        //
-        NSString *formatterTemplate = [(id <RMInteractiveSourcePrivate>)source interactivityFormatterTemplate];
-
-        if (formatterTemplate)
-        {
-            NSMutableDictionary *infoObject = [NSJSONSerialization JSONObjectWithData:[[interactivityDictionary objectForKey:@"keyJSON"] dataUsingEncoding:NSUTF8StringEncoding]
-                                                                              options:NSJSONReadingMutableContainers
-                                                                                error:nil];
-
-#ifdef DEBUG
-            [GRMustache preventNSUndefinedKeyExceptionAttack];
-#endif
-
-            switch (outputType)
-            {
-                case RMInteractiveSourceOutputTypeTeaser:
-                {
-                    [infoObject setValue:[NSNumber numberWithBool:YES] forKey:@"__teaser__"];
-                    
-                    formattedOutput = [GRMustacheTemplate renderObject:infoObject fromString:formatterTemplate error:NULL];
-
-                    break;
-                }
-                case RMInteractiveSourceOutputTypeFull:
-                default:
-                {
-                    [infoObject setValue:[NSNumber numberWithBool:YES] forKey:@"__full__"];
-                    
-                    formattedOutput = [GRMustacheTemplate renderObject:infoObject fromString:formatterTemplate error:NULL];
-
-                    break;
-                }
-            }
-        }
-    }
-    
-    return formattedOutput;
 }
 
 @end
@@ -476,13 +416,6 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     return ([template length] ? template : nil);
 }
 
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView
-{
-    if ([self supportsInteractivity])
-        return [RMInteractiveSource formattedOutputOfType:outputType forPoint:point inMapView:mapView];
-    
-    return nil;
-}
 
 +(NSDictionary*)dataInMapView:(RMMapView *)mapView forPoint:(CGPoint)point {
         id <RMTileSource, RMInteractiveSource>source = [mapView interactiveTileSource];
@@ -614,14 +547,6 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 {
     if ([self.infoDictionary objectForKey:@"template"] && [[self.infoDictionary objectForKey:@"template"] length])
         return [self.infoDictionary objectForKey:@"template"];
-    
-    return nil;
-}
-
-- (NSString *)formattedOutputOfType:(RMInteractiveSourceOutputType)outputType forPoint:(CGPoint)point inMapView:(RMMapView *)mapView
-{
-    if ([self supportsInteractivity])
-        return [RMInteractiveSource formattedOutputOfType:outputType forPoint:point inMapView:mapView];
     
     return nil;
 }
