@@ -319,6 +319,53 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     return NO;
 }
 
+-(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map {
+    const short searchZoomLevel = 22;
+    
+    [map setZoom:20.0 animated:YES];
+    
+    [queue inDatabase:^(FMDatabase *db) {
+        NSString *query = [NSString stringWithFormat:@"select * from grid_data where key_json like \'%%\"id\":\"%@%%\' and zoom_level=?", shopID];
+        FMResultSet *results = [db executeQuery:query withArgumentsInArray:@[@(searchZoomLevel)]];
+        
+        int coordinateCount = 0;
+        uint32_t tileX =0, tileY = 0;
+        
+        
+        while ([results next]) {
+            coordinateCount++;
+            NSDictionary *resultDict = [results resultDictionary];
+            NSNumber *y = resultDict[@"tile_row"];
+            NSNumber *x = resultDict[@"tile_column"];
+            
+            tileX += x.unsignedIntValue;
+            tileY += y.unsignedIntValue;
+            
+        }
+        
+        [results close];
+        
+        if (coordinateCount > 0) {
+            tileX = tileX / coordinateCount;
+            tileY = tileY / coordinateCount;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                RMTile tile = RMTileMake(tileX, tileY,searchZoomLevel);
+                RMSphericalTrapezium coordinates = [map latitudeLongitudeBoundingBoxForTile:tile];
+                
+                CLLocationCoordinate2D southWest = coordinates.southWest;
+                CLLocationCoordinate2D northEast = coordinates.northEast;
+                
+                CLLocationCoordinate2D scrollCoordinates = CLLocationCoordinate2DMake(-(southWest.latitude + northEast.latitude) /2, (southWest.longitude + northEast.longitude)/2);
+                
+                [map setCenterCoordinate:scrollCoordinates animated:YES];
+            });
+            
+        }
+    }];
+
+}
+
 - (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 {
     RMTilePoint tilePoint = RMInteractiveSourceNormalizedTilePointForMapView(point, mapView);
