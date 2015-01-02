@@ -83,7 +83,7 @@ typedef enum : NSUInteger {
 /** Returns YES if a tile source supports interactivity features. */
 - (BOOL)supportsInteractivity;
 
--(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map;
+-(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map zoomLevel:(short)zoom;
 
 @end
 

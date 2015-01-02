@@ -319,10 +319,10 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     return NO;
 }
 
--(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map {
+-(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map zoomLevel:(short)zoom {
     const short searchZoomLevel = 22;
     
-    [map setZoom:20.0 animated:YES];
+    [map setZoom:zoom animated:YES];
     
     [queue inDatabase:^(FMDatabase *db) {
         NSString *query = [NSString stringWithFormat:@"select * from grid_data where key_json like \'%%\"id\":\"%@%%\' and zoom_level=?", shopID];
