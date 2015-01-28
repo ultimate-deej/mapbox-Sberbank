@@ -79,7 +79,6 @@
 
 @property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 @property (nonatomic, retain) RMUserLocation *userLocation;
-@property (nonatomic, strong) NSDate *lastBeaconUpdateLocation;
 
 - (void)createMapView;
 
@@ -212,6 +211,7 @@
     SMCalloutView *_currentCallout;
 
     BOOL _rotateAtMinZoom;
+    NSDate *lastBeaconUpdateLocation;
 }
 
 @synthesize decelerationMode = _decelerationMode;
@@ -3516,9 +3516,9 @@
 {
     //ГИГАНТСКИЙ КОСТЫЛЬ ИДЕТ ЗДЕСЬ!!!
     if (manager == nil) {
-        self.lastBeaconUpdateLocation = [NSDate date];
+        lastBeaconUpdateLocation = [NSDate date];
     } else {
-        if (self.lastBeaconUpdateLocation != nil && [self.lastBeaconUpdateLocation timeIntervalSinceNow] > -10) {
+        if (lastBeaconUpdateLocation != nil && [lastBeaconUpdateLocation timeIntervalSinceNow] > -10) {
             return;
         }
     }
