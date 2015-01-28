@@ -532,7 +532,13 @@ typedef enum : NSUInteger {
 *   @param animated Whether changes to the map center or rotation should be animated when the mode is changed. */
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
+//Darius's properties. Should be hardly commented in the fututre
 @property (nonatomic, assign) CGFloat mapAngleCorrection;
+@property (nonatomic, strong)  CLLocationManager *locationManager;
+
+//Darius's methods
 -(void)setAngleCorrection:(CGFloat)angle animated:(BOOL)animated;
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
 
 @end

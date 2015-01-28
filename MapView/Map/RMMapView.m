@@ -79,6 +79,7 @@
 
 @property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 @property (nonatomic, retain) RMUserLocation *userLocation;
+@property (nonatomic, strong) NSDate *lastBeaconUpdateLocation;
 
 - (void)createMapView;
 
@@ -185,8 +186,6 @@
 
     RMAnnotation *_draggedAnnotation;
     CGPoint _dragOffset;
-
-    CLLocationManager *_locationManager;
 
     RMAnnotation *_accuracyCircleAnnotation;
     RMAnnotation *_trackingHaloAnnotation;
@@ -3515,6 +3514,17 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
+    //ГИГАНТСКИЙ КОСТЫЛЬ ИДЕТ ЗДЕСЬ!!!
+    if (manager == nil) {
+        self.lastBeaconUpdateLocation = [NSDate date];
+    } else {
+        if (self.lastBeaconUpdateLocation != nil && [self.lastBeaconUpdateLocation timeIntervalSinceNow] > -10) {
+            return;
+        }
+    }
+    //ГИГАНТСКИЦ КОСТЫЛЬ ЗАКАНЧИВАЕТСЯ ЗДЕСЬ
+    
+    
     if ( ! _showsUserLocation || _mapScrollView.isDragging || ! newLocation || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
         return;
 
