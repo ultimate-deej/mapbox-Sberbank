@@ -306,7 +306,6 @@
 		DD63175E17D1506D008CA79B /* RMGreatCircleAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMGreatCircleAnnotation.m; sourceTree = "<group>"; };
 		DD63176117D15EB5008CA79B /* RMCircleAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCircleAnnotation.h; sourceTree = "<group>"; };
 		DD63176217D15EB5008CA79B /* RMCircleAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCircleAnnotation.m; sourceTree = "<group>"; };
-		DD63DD521811AD0B00726E03 /* libGRMustache6-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libGRMustache6-iOS.a"; path = "GRMustache/lib/libGRMustache6-iOS.a"; sourceTree = "<group>"; };
 		DD6A83751644A20C0097F31F /* Mapbox.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Mapbox.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD7C7E36164C894F0021CCA5 /* RMStaticMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStaticMapView.h; sourceTree = "<group>"; };
 		DD7C7E37164C894F0021CCA5 /* RMStaticMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStaticMapView.m; sourceTree = "<group>"; };
@@ -697,7 +696,6 @@
 			isa = PBXGroup;
 			children = (
 				B8474B8C0EB40094006A0BC1 /* FMDB */,
-				DDC4BEEE152E3DEC00089409 /* GRMustache */,
 				DDDFF7FE165D5BA200A9D877 /* Proj4 */,
 				DD76E12E161E347B00F60F43 /* SMCallout */,
 			);
@@ -711,15 +709,6 @@
 				DDC4BED4152E3BD700089409 /* RMInteractiveSource.m */,
 			);
 			name = Interactivity;
-			sourceTree = "<group>";
-		};
-		DDC4BEEE152E3DEC00089409 /* GRMustache */ = {
-			isa = PBXGroup;
-			children = (
-				DD63DD521811AD0B00726E03 /* libGRMustache6-iOS.a */,
-			);
-			name = GRMustache;
-			path = Map;
 			sourceTree = "<group>";
 		};
 		DDDFF7FE165D5BA200A9D877 /* Proj4 */ = {
