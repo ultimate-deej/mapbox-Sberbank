@@ -727,6 +727,7 @@
         BOOL flag = wasUserEvent;
 
         __weak RMMapView *weakSelf = self;
+        __weak id<RMMapViewDelegate> weakDelegate = _delegate;
         BOOL hasBeforeMapMove = _delegateHasBeforeMapMove;
         BOOL hasAfterMapMove  = _delegateHasAfterMapMove;
 
@@ -735,7 +736,7 @@
             dispatch_async(dispatch_get_main_queue(), ^(void)
             {
                 if (hasBeforeMapMove)
-                    [_delegate beforeMapMove:weakSelf byUser:flag];
+                    [weakDelegate beforeMapMove:weakSelf byUser:flag];
             });
         }
 
@@ -748,7 +749,7 @@
                 dispatch_async(dispatch_get_main_queue(), ^(void)
                 {
                     if (hasAfterMapMove)
-                        [_delegate afterMapMove:weakSelf byUser:flag];
+                        [weakDelegate afterMapMove:weakSelf byUser:flag];
                 });
             }];
         }
@@ -770,6 +771,7 @@
         BOOL flag = wasUserEvent;
 
         __weak RMMapView *weakSelf = self;
+        __weak id<RMMapViewDelegate> weakDelegate = _delegate;
         BOOL hasBeforeMapZoom = _delegateHasBeforeMapZoom;
         BOOL hasAfterMapZoom  = _delegateHasAfterMapZoom;
 
@@ -778,7 +780,7 @@
             dispatch_async(dispatch_get_main_queue(), ^(void)
             {
                 if (hasBeforeMapZoom)
-                    [_delegate beforeMapZoom:weakSelf byUser:flag];
+                   [weakDelegate beforeMapZoom:weakSelf byUser:flag];
             });
         }
 
@@ -791,7 +793,7 @@
                 dispatch_async(dispatch_get_main_queue(), ^(void)
                 {
                     if (hasAfterMapZoom)
-                        [_delegate afterMapZoom:weakSelf byUser:flag];
+                        [weakDelegate beforeMapZoom:weakSelf byUser:flag];
                 });
             }];
         }
