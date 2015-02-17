@@ -3397,30 +3397,7 @@
         {
             [_locationManager stopUpdatingHeading];
 
-//            [CATransaction setAnimationDuration:0.5];
-//            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-//
-//            [UIView animateWithDuration:(animated ? 0.5 : 0.0)
-//                                  delay:0.0
-//                                options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
-//                             animations:^(void)
-//                             {
-//                                 _mapTransform = CGAffineTransformIdentity;
-//                                 _annotationTransform = CATransform3DIdentity;
-//
-//                                 _mapScrollView.transform = _mapTransform;
-//                                 _compassButton.transform = _mapTransform;
-//                                 _overlayView.transform   = _mapTransform;
-//
-//                                 _compassButton.alpha = 0;
-//
-//                                 for (RMAnnotation *annotation in _annotations)
-//                                     if ([annotation.layer isKindOfClass:[RMMarker class]])
-//                                         annotation.layer.transform = _annotationTransform;
-//                             }
-//                             completion:nil];
-//
-//            [CATransaction commit];
+            [self setupDefaultScreenTransformAnimated:YES];
 
             if (_userHeadingTrackingView)
                 [_userHeadingTrackingView removeFromSuperview]; _userHeadingTrackingView = nil;
@@ -3442,30 +3419,7 @@
             if (_userHeadingTrackingView)
                 [_userHeadingTrackingView removeFromSuperview]; _userHeadingTrackingView = nil;
 
-//            [CATransaction setAnimationDuration:0.5];
-//            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-//
-//            [UIView animateWithDuration:(animated ? 0.5 : 0.0)
-//                                  delay:0.0
-//                                options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
-//                             animations:^(void)
-//                             {
-//                                 _mapTransform = CGAffineTransformIdentity;
-//                                 _annotationTransform = CATransform3DIdentity;
-//
-//                                 _mapScrollView.transform = _mapTransform;
-//                                 _compassButton.transform = _mapTransform;
-//                                 _overlayView.transform   = _mapTransform;
-//
-//                                 _compassButton.alpha = 0;
-//
-//                                 for (RMAnnotation *annotation in _annotations)
-//                                     if ([annotation.layer isKindOfClass:[RMMarker class]])
-//                                         annotation.layer.transform = _annotationTransform;
-//                             }
-//                             completion:nil];
-//
-//            [CATransaction commit];
+            [self setupDefaultScreenTransformAnimated:YES];
 
             break;
         }
@@ -4066,9 +4020,12 @@
 
 -(void)setAngleCorrection:(CGFloat)angle animated:(BOOL)animated {
     self.mapAngleCorrection = angle;
-    
+    [self setupDefaultScreenTransformAnimated:animated];
+}
+
+-(void)setupDefaultScreenTransformAnimated:(BOOL)animated {
     void (^correctionBlock)()  = ^{
-        CGFloat angleInRadians = (M_PI / -180) * angle;
+        CGFloat angleInRadians = (M_PI / -180) * self.mapAngleCorrection;
         
         _mapTransform = CGAffineTransformMakeRotation(angleInRadians);
         _annotationTransform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(-angleInRadians));
@@ -4099,6 +4056,5 @@
     } else {
         correctionBlock();
     }
-    
 }
 @end
