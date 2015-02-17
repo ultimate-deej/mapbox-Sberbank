@@ -46,13 +46,13 @@
 @implementation RMTileCache
 {
     NSMutableArray *_tileCaches;
-
+    
     // The memory cache, if we have one
     // This one has its own variable because we want to propagate cache hits down in
     // the cache hierarchy up to the memory cache
     RMMemoryCache *_memoryCache;
     NSTimeInterval _expiryPeriod;
-
+    
     dispatch_queue_t _tileCacheQueue;
     
     id <RMTileSource>_activeTileSource;
@@ -65,52 +65,52 @@
 {
     if (!(self = [super init]))
         return nil;
-
+    
     _tileCaches = [NSMutableArray new];
     _tileCacheQueue = dispatch_queue_create("routeme.tileCacheQueue", DISPATCH_QUEUE_CONCURRENT);
-
+    
     _memoryCache = nil;
     _expiryPeriod = period;
     
     _backgroundCacheDelegate = nil;
     _activeTileSource = nil;
     _backgroundFetchQueue = nil;
-
+    
     id cacheCfg = [[RMConfiguration configuration] cacheConfiguration];
     if (!cacheCfg)
         cacheCfg = [NSArray arrayWithObjects:
                     [NSDictionary dictionaryWithObject: @"memory-cache" forKey: @"type"],
                     [NSDictionary dictionaryWithObject: @"db-cache"     forKey: @"type"],
                     nil];
-
+    
     for (id cfg in cacheCfg)
     {
         id <RMTileCache> newCache = nil;
-
+        
         @try {
-
+            
             NSString *type = [cfg valueForKey:@"type"];
-
+            
             if ([@"memory-cache" isEqualToString:type])
             {
                 _memoryCache = [self memoryCacheWithConfig:cfg];
                 continue;
             }
-
+            
             if ([@"db-cache" isEqualToString:type])
                 newCache = [self databaseCacheWithConfig:cfg];
-
+            
             if (newCache)
                 [_tileCaches addObject:newCache];
             else
                 RMLog(@"failed to create cache of type %@", type);
-
+            
         }
         @catch (NSException * e) {
             RMLog(@"*** configuration error: %@", [e reason]);
         }
     }
-
+    
     return self;
 }
 
@@ -118,7 +118,7 @@
 {
     if (!(self = [self initWithExpiryPeriod:0]))
         return nil;
-
+    
     return self;
 }
 
@@ -128,8 +128,8 @@
         [self cancelBackgroundCache];
     
     dispatch_barrier_sync(_tileCacheQueue, ^{
-         _memoryCache = nil;
-         _tileCaches = nil;
+        _memoryCache = nil;
+        _tileCaches = nil;
     });
 #if ! OS_OBJECT_USE_OBJC
     dispatch_release(_tileCacheQueue);
@@ -160,89 +160,89 @@
 
 + (NSNumber *)tileHash:(RMTile)tile
 {
-	return [NSNumber numberWithUnsignedLongLong:RMTileKey(tile)];
+    return [NSNumber numberWithUnsignedLongLong:RMTileKey(tile)];
 }
 
 // Returns the cached image if it exists. nil otherwise.
 - (UIImage *)cachedImage:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
     __block UIImage *image = [_memoryCache cachedImage:tile withCacheKey:aCacheKey];
-
+    
     if (image)
         return image;
-
+    
     dispatch_sync(_tileCacheQueue, ^{
-
+        
         for (id <RMTileCache> cache in _tileCaches)
         {
             image = [cache cachedImage:tile withCacheKey:aCacheKey];
-
+            
             if (image != nil)
             {
                 [_memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
                 break;
             }
         }
-
+        
     });
-
-	return image;
+    
+    return image;
 }
 
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
     if (!image || !aCacheKey)
         return;
-
+    
     [_memoryCache addImage:image forTile:tile withCacheKey:aCacheKey];
-
+    
     dispatch_sync(_tileCacheQueue, ^{
-
+        
         for (id <RMTileCache> cache in _tileCaches)
-        {	
+        {
             if ([cache respondsToSelector:@selector(addImage:forTile:withCacheKey:)])
                 [cache addImage:image forTile:tile withCacheKey:aCacheKey];
         }
-
+        
     });
 }
 
 - (void)didReceiveMemoryWarning
 {
-	LogMethod();
-
+    LogMethod();
+    
     [_memoryCache didReceiveMemoryWarning];
-
+    
     dispatch_sync(_tileCacheQueue, ^{
-
+        
         for (id<RMTileCache> cache in _tileCaches)
         {
             [cache didReceiveMemoryWarning];
         }
-
+        
     });
 }
 
 - (void)removeAllCachedImages
 {
     [_memoryCache removeAllCachedImages];
-
+    
     dispatch_sync(_tileCacheQueue, ^{
-
+        
         for (id<RMTileCache> cache in _tileCaches)
         {
             [cache removeAllCachedImages];
         }
-
+        
     });
 }
 
 - (void)removeAllCachedImagesForCacheKey:(NSString *)cacheKey
 {
     [_memoryCache removeAllCachedImagesForCacheKey:cacheKey];
-
+    
     dispatch_sync(_tileCacheQueue, ^{
-
+        
         for (id<RMTileCache> cache in _tileCaches)
         {
             [cache removeAllCachedImagesForCacheKey:cacheKey];
@@ -259,20 +259,20 @@
 {
     NSUInteger minCacheZoom = minZoom;
     NSUInteger maxCacheZoom = maxZoom;
-
+    
     CLLocationDegrees minCacheLat = southWest.latitude;
     CLLocationDegrees maxCacheLat = northEast.latitude;
     CLLocationDegrees minCacheLon = southWest.longitude;
     CLLocationDegrees maxCacheLon = northEast.longitude;
-
+    
     NSAssert(minCacheZoom <= maxCacheZoom, @"Minimum zoom should be less than or equal to maximum zoom");
     NSAssert(maxCacheLat  >  minCacheLat,  @"Northernmost bounds should exceed southernmost bounds");
     NSAssert(maxCacheLon  >  minCacheLon,  @"Easternmost bounds should exceed westernmost bounds");
-
+    
     NSUInteger n, xMin, yMax, xMax, yMin;
-
+    
     NSUInteger totalTiles = 0;
-
+    
     for (NSUInteger zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
     {
         n = pow(2.0, zoom);
@@ -280,10 +280,10 @@
         yMax = floor((1.0 - (logf(tanf(minCacheLat * M_PI / 180.0) + 1.0 / cosf(minCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
         xMax = floor(((maxCacheLon + 180.0) / 360.0) * n);
         yMin = floor((1.0 - (logf(tanf(maxCacheLat * M_PI / 180.0) + 1.0 / cosf(maxCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
-
+        
         totalTiles += (xMax + 1 - xMin) * (yMax + 1 - yMin);
     }
-
+    
     return totalTiles;
 }
 
@@ -291,29 +291,29 @@
 {
     if (self.isBackgroundCaching)
         return;
-
+    
     _activeTileSource = tileSource;
-
+    
     _backgroundFetchQueue = [[NSOperationQueue alloc] init];
     [_backgroundFetchQueue setMaxConcurrentOperationCount:6];
-
+    
     NSUInteger totalTiles = [self tileCountForSouthWest:southWest northEast:northEast minZoom:minZoom maxZoom:maxZoom];
-
+    
     NSUInteger minCacheZoom = minZoom;
     NSUInteger maxCacheZoom = maxZoom;
-
+    
     CLLocationDegrees minCacheLat = southWest.latitude;
     CLLocationDegrees maxCacheLat = northEast.latitude;
     CLLocationDegrees minCacheLon = southWest.longitude;
     CLLocationDegrees maxCacheLon = northEast.longitude;
-
+    
     if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBeginBackgroundCacheWithCount:forTileSource:)])
         [_backgroundCacheDelegate tileCache:self didBeginBackgroundCacheWithCount:totalTiles forTileSource:_activeTileSource];
-
+    
     NSUInteger n, xMin, yMax, xMax, yMin;
-
+    
     __block NSUInteger progTile = 0;
-
+    
     for (NSUInteger zoom = minCacheZoom; zoom <= maxCacheZoom; zoom++)
     {
         n = pow(2.0, zoom);
@@ -321,79 +321,88 @@
         yMax = floor((1.0 - (logf(tanf(minCacheLat * M_PI / 180.0) + 1.0 / cosf(minCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
         xMax = floor(((maxCacheLon + 180.0) / 360.0) * n);
         yMin = floor((1.0 - (logf(tanf(maxCacheLat * M_PI / 180.0) + 1.0 / cosf(maxCacheLat * M_PI / 180.0)) / M_PI)) / 2.0 * n);
-
+        
         for (NSUInteger x = xMin; x <= xMax; x++)
         {
             for (NSUInteger y = yMin; y <= yMax; y++)
             {
                 RMTileCacheDownloadOperation *operation = [[RMTileCacheDownloadOperation alloc] initWithTile:RMTileMake(x, y, zoom)
-                                                                                                forTileSource:_activeTileSource
-                                                                                                   usingCache:self];
-
-                __block RMTileCacheDownloadOperation *internalOperation = operation;
-
+                                                                                               forTileSource:_activeTileSource
+                                                                                                  usingCache:self];
+                
+                __weak __block RMTileCacheDownloadOperation *internalOperation = operation;
+                __weak __block NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
+                __weak __block id<RMTileSource> weakActiveTileSource = _activeTileSource;
+                __weak RMTileCache *weakSelf = self;
+                
                 [operation setCompletionBlock:^(void)
-                {
-                    dispatch_sync(dispatch_get_main_queue(), ^(void)
-                    {
-                        if ( ! [internalOperation isCancelled])
-                        {
-                            progTile++;
-
-                            if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
-                                [_backgroundCacheDelegate tileCache:self didBackgroundCacheTile:RMTileMake(x, y, zoom) withIndex:progTile ofTotalTileCount:totalTiles];
-
-                            if (progTile == totalTiles)
-                            {
-                                 _backgroundFetchQueue = nil;
-
-                                 _activeTileSource = nil;
-
-                                if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
-                                    [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:self];
-                            }
-                        }
-
-                        internalOperation = nil;
-                    });
-                }];
-
+                 {
+                     dispatch_sync(dispatch_get_main_queue(), ^(void)
+                                   {
+                                       if ( ! [internalOperation isCancelled])
+                                       {
+                                           progTile++;
+                                           
+                                           if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
+                                               [_backgroundCacheDelegate tileCache:weakSelf
+                                                            didBackgroundCacheTile:RMTileMake(x, y, zoom)
+                                                                         withIndex:progTile
+                                                                  ofTotalTileCount:totalTiles];
+                                           
+                                           if (progTile == totalTiles)
+                                           {
+                                               weakBackgroundFetchQueue = nil;
+                                               weakActiveTileSource = nil;
+                                               
+                                               if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
+                                                   [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:weakSelf];
+                                           }
+                                       }
+                                       
+                                       internalOperation = nil;
+                                   });
+                 }];
+                
                 [_backgroundFetchQueue addOperation:operation];
             }
         }
-    };
+    }
 }
 
 - (void)cancelBackgroundCache
 {
+    __weak RMTileCache *weakSelf = self;
+    __weak __block NSOperationQueue *weakBackgroundFetchQueue = _backgroundFetchQueue;
+    __weak __block id<RMTileSource> weakActiveTileSource = _activeTileSource;
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
-    {
-        @synchronized (self)
-        {
-            BOOL didCancel = NO;
-
-            if (_backgroundFetchQueue)
-            {
-                [_backgroundFetchQueue cancelAllOperations];
-                [_backgroundFetchQueue waitUntilAllOperationsAreFinished];
-                 _backgroundFetchQueue = nil;
-
-                didCancel = YES;
-            }
-
-            if (_activeTileSource)
-                 _activeTileSource = nil;
-
-            if (didCancel)
-            {
-                dispatch_sync(dispatch_get_main_queue(), ^(void)
-                {
-                    if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
-                        [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:self];
-                });
-            }
-        }
-    });
+                   {
+                       @synchronized (weakSelf)
+                       {
+                           BOOL didCancel = NO;
+                           
+                           if (weakBackgroundFetchQueue)
+                           {
+                               [weakBackgroundFetchQueue cancelAllOperations];
+                               [weakBackgroundFetchQueue waitUntilAllOperationsAreFinished];
+                               weakBackgroundFetchQueue = nil;
+                               
+                               didCancel = YES;
+                           }
+                           
+                          if (weakActiveTileSource)
+                               weakActiveTileSource = nil;
+                           
+                           if (didCancel)
+                           {
+                               dispatch_sync(dispatch_get_main_queue(), ^(void)
+                                             {
+                                                 if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
+                                                     [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:weakSelf];
+                                             });
+                           }
+                       }
+                   });
 }
 
 @end
@@ -407,13 +416,13 @@ static NSMutableDictionary *predicateValues = nil;
 - (NSDictionary *)predicateValues
 {
     static dispatch_once_t predicateValuesOnceToken;
-
+    
     dispatch_once(&predicateValuesOnceToken, ^{
         struct utsname systemInfo;
         uname(&systemInfo);
-
+        
         NSString *machine = [NSString stringWithCString:systemInfo.machine encoding:NSASCIIStringEncoding];
-
+        
         predicateValues = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                            [[UIDevice currentDevice] model], @"model",
                            machine, @"machine",
@@ -421,103 +430,103 @@ static NSMutableDictionary *predicateValues = nil;
                            [NSNumber numberWithFloat:[[[UIDevice currentDevice] systemVersion] floatValue]], @"systemVersion",
                            [NSNumber numberWithInt:[[UIDevice currentDevice] userInterfaceIdiom]], @"userInterfaceIdiom",
                            nil];
-
+        
         if ( ! ([machine isEqualToString:@"i386"] || [machine isEqualToString:@"x86_64"]))
         {
             NSNumber *machineNumber = [NSNumber numberWithFloat:[[[machine stringByTrimmingCharactersInSet:[NSCharacterSet letterCharacterSet]] stringByReplacingOccurrencesOfString:@"," withString:@"."] floatValue]];
-
+            
             if ( ! machineNumber)
                 machineNumber = [NSNumber numberWithFloat:0.0];
-
+            
             [predicateValues setObject:machineNumber forKey:@"machineNumber"];
         }
         else
         {
             [predicateValues setObject:[NSNumber numberWithFloat:0.0] forKey:@"machineNumber"];
         }
-
+        
         // A predicate might be:
         // (self.model = 'iPad' and self.machineNumber >= 3) or (self.machine = 'x86_64')
         // See NSPredicate
-
-//        NSLog(@"Predicate values:\n%@", [predicateValues description]);
+        
+        //        NSLog(@"Predicate values:\n%@", [predicateValues description]);
     });
-
+    
     return predicateValues;
 }
 
 - (id <RMTileCache>)memoryCacheWithConfig:(NSDictionary *)cfg
 {
     NSUInteger capacity = 32;
-
-	NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
-	if (capacityNumber != nil)
+    
+    NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
+    if (capacityNumber != nil)
         capacity = [capacityNumber unsignedIntegerValue];
-
+    
     NSArray *predicates = [cfg objectForKey:@"predicates"];
-
+    
     if (predicates)
     {
         NSDictionary *predicateValues = [self predicateValues];
-
+        
         for (NSDictionary *predicateDescription in predicates)
         {
             NSString *predicate = [predicateDescription objectForKey:@"predicate"];
             if ( ! predicate)
                 continue;
-
+            
             if ( ! [[NSPredicate predicateWithFormat:predicate] evaluateWithObject:predicateValues])
                 continue;
-
+            
             capacityNumber = [predicateDescription objectForKey:@"capacity"];
             if (capacityNumber != nil)
                 capacity = [capacityNumber unsignedIntegerValue];
         }
     }
-
+    
     RMLog(@"Memory cache configuration: {capacity : %lu}", (unsigned long)capacity);
-
-	return [[RMMemoryCache alloc] initWithCapacity:capacity];
+    
+    return [[RMMemoryCache alloc] initWithCapacity:capacity];
 }
 
 - (id <RMTileCache>)databaseCacheWithConfig:(NSDictionary *)cfg
 {
     BOOL useCacheDir = NO;
     RMCachePurgeStrategy strategy = RMCachePurgeStrategyFIFO;
-
+    
     NSUInteger capacity = 1000;
     NSUInteger minimalPurge = capacity / 10;
-
+    
     // Defaults
-
+    
     NSNumber *capacityNumber = [cfg objectForKey:@"capacity"];
-
+    
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad && [cfg objectForKey:@"capacity-ipad"])
     {
         NSLog(@"***** WARNING: deprecated config option capacity-ipad, use a predicate instead: -[%@ %@] (line %d)", self, NSStringFromSelector(_cmd), __LINE__);
         capacityNumber = [cfg objectForKey:@"capacity-ipad"];
     }
-
+    
     NSString *strategyStr = [cfg objectForKey:@"strategy"];
     NSNumber *useCacheDirNumber = [cfg objectForKey:@"useCachesDirectory"];
     NSNumber *minimalPurgeNumber = [cfg objectForKey:@"minimalPurge"];
     NSNumber *expiryPeriodNumber = [cfg objectForKey:@"expiryPeriod"];
-
+    
     NSArray *predicates = [cfg objectForKey:@"predicates"];
-
+    
     if (predicates)
     {
         NSDictionary *predicateValues = [self predicateValues];
-
+        
         for (NSDictionary *predicateDescription in predicates)
         {
             NSString *predicate = [predicateDescription objectForKey:@"predicate"];
             if ( ! predicate)
                 continue;
-
+            
             if ( ! [[NSPredicate predicateWithFormat:predicate] evaluateWithObject:predicateValues])
                 continue;
-
+            
             if ([predicateDescription objectForKey:@"capacity"])
                 capacityNumber = [predicateDescription objectForKey:@"capacity"];
             if ([predicateDescription objectForKey:@"strategy"])
@@ -530,13 +539,13 @@ static NSMutableDictionary *predicateValues = nil;
                 expiryPeriodNumber = [predicateDescription objectForKey:@"expiryPeriod"];
         }
     }
-
+    
     // Check the values
-
+    
     if (capacityNumber != nil)
     {
         NSInteger value = [capacityNumber intValue];
-
+        
         // 0 is valid: it means no capacity limit
         if (value >= 0)
         {
@@ -548,7 +557,7 @@ static NSMutableDictionary *predicateValues = nil;
             RMLog(@"illegal value for capacity: %ld", (long)value);
         }
     }
-
+    
     if (strategyStr != nil)
     {
         if ([strategyStr caseInsensitiveCompare:@"FIFO"] == NSOrderedSame) strategy = RMCachePurgeStrategyFIFO;
@@ -558,31 +567,31 @@ static NSMutableDictionary *predicateValues = nil;
     {
         strategyStr = @"FIFO";
     }
-
+    
     if (useCacheDirNumber != nil)
         useCacheDir = [useCacheDirNumber boolValue];
-
+    
     if (minimalPurgeNumber != nil && capacity != 0)
     {
         NSUInteger value = [minimalPurgeNumber unsignedIntValue];
-
+        
         if (value > 0 && value<=capacity)
             minimalPurge = value;
         else
             RMLog(@"minimalPurge must be at least one and at most the cache capacity");
     }
-
+    
     if (expiryPeriodNumber != nil)
         _expiryPeriod = [expiryPeriodNumber doubleValue];
-
+    
     RMLog(@"Database cache configuration: {capacity : %lu, strategy : %@, minimalPurge : %lu, expiryPeriod: %.0f, useCacheDir : %@}", (unsigned long)capacity, strategyStr, (unsigned long)minimalPurge, _expiryPeriod, useCacheDir ? @"YES" : @"NO");
-
+    
     RMDatabaseCache *dbCache = [[RMDatabaseCache alloc] initUsingCacheDir:useCacheDir];
     [dbCache setCapacity:capacity];
     [dbCache setPurgeStrategy:strategy];
     [dbCache setMinimalPurge:minimalPurge];
     [dbCache setExpiryPeriod:_expiryPeriod];
-
+    
     return dbCache;
 }
 
