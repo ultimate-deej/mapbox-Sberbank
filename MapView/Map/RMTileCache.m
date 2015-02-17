@@ -402,6 +402,14 @@
                                                 
                                                 if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)]) {
                                                     [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:weakSelf];
+                                                } else
+                                                {
+                                                    if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didReceiveError:whenCachingTile:)])
+                                                    {
+                                                        [_backgroundCacheDelegate tileCache:weakSelf
+                                                                            didReceiveError:internalOperation.error
+                                                                            whenCachingTile:RMTileMake((uint32_t)x, (uint32_t)y, zoom)];
+                                                    }
                                                 }
                                             });
                          }
