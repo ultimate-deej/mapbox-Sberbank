@@ -3440,14 +3440,14 @@
     if ( ! _showsUserLocation || _mapScrollView.isDragging || ! newLocation || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
         return;
 
+    self.userLocation.location = newLocation;
+    
     if ([newLocation distanceFromLocation:oldLocation])
     {
-        self.userLocation.location = newLocation;
-
         if (_delegateHasDidUpdateUserLocation)
         {
             [_delegate mapView:self didUpdateUserLocation:self.userLocation];
-
+            
             if ( ! _showsUserLocation)
                 return;
         }
