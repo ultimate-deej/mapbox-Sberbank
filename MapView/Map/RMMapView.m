@@ -1369,9 +1369,6 @@
 
     [_visibleAnnotations removeAllObjects];
     //[self correctPositionOfAllAnnotations];
-    
-#warning - next line of code is testing.
-    [self setAngleCorrection:self.mapAngleCorrection animated:NO];
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
