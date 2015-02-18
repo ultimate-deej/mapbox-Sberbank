@@ -3371,7 +3371,7 @@
             if (self.userLocation)
                 #pragma clang diagnostic push
                 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-                [self locationManager:_locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
+                [self locationManager:([self beaconLocationAvailable] ? nil : _locationManager) didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
                 #pragma clang diagnostic pop
 
             if (_userHeadingTrackingView)
@@ -3409,7 +3409,7 @@
             if (self.userLocation)
                 #pragma clang diagnostic push
                 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-                [self locationManager:_locationManager didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
+                [self locationManager:([self beaconLocationAvailable] ? nil : _locationManager) didUpdateToLocation:self.userLocation.location fromLocation:self.userLocation.location];
                 #pragma clang diagnostic pop
 
             [self updateHeadingForDeviceOrientation];
@@ -3424,13 +3424,17 @@
         [_delegate mapView:self didChangeUserTrackingMode:_userTrackingMode animated:animated];
 }
 
+-(BOOL)beaconLocationAvailable {
+    return (lastBeaconUpdateLocation != nil && [lastBeaconUpdateLocation timeIntervalSinceNow] > -10);
+}
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     //ГИГАНТСКИЙ КОСТЫЛЬ ИДЕТ ЗДЕСЬ!!!
     if (manager == nil) {
         lastBeaconUpdateLocation = [NSDate date];
     } else {
-        if (lastBeaconUpdateLocation != nil && [lastBeaconUpdateLocation timeIntervalSinceNow] > -10) {
+        if ([self beaconLocationAvailable]) {
             return;
         }
     }
@@ -3440,14 +3444,14 @@
     if ( ! _showsUserLocation || _mapScrollView.isDragging || ! newLocation || ! CLLocationCoordinate2DIsValid(newLocation.coordinate))
         return;
 
-    self.userLocation.location = newLocation;
-    
     if ([newLocation distanceFromLocation:oldLocation])
     {
+        self.userLocation.location = newLocation;
+
         if (_delegateHasDidUpdateUserLocation)
         {
             [_delegate mapView:self didUpdateUserLocation:self.userLocation];
-            
+
             if ( ! _showsUserLocation)
                 return;
         }
