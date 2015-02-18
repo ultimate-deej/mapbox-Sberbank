@@ -537,6 +537,8 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong)  CLLocationManager *locationManager;
 
 //Darius's methods
+- (void)tappedHeadingCompass:(id)sender;
+
 -(void)setAngleCorrection:(CGFloat)angle animated:(BOOL)animated;
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
