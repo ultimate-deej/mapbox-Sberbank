@@ -1367,8 +1367,9 @@
 
     [self addGestureRecognizer:twoFingerSingleTapRecognizer];
 
+    
     [_visibleAnnotations removeAllObjects];
-    //[self correctPositionOfAllAnnotations];
+    [self correctPositionOfAllAnnotations];
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
