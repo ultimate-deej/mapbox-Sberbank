@@ -46,6 +46,10 @@
 		23A0AAEB0EB90AA6003A4521 /* RMFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A0AAEA0EB90AA6003A4521 /* RMFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		25757F4F1291C8640083D504 /* RMCircle.h in Headers */ = {isa = PBXBuildFile; fileRef = 25757F4D1291C8640083D504 /* RMCircle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		25757F501291C8640083D504 /* RMCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 25757F4E1291C8640083D504 /* RMCircle.m */; };
+		26F448CE1AA91786009D4AD9 /* CGPointExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F448CA1AA91786009D4AD9 /* CGPointExtension.h */; };
+		26F448CF1AA91786009D4AD9 /* CGPointExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F448CB1AA91786009D4AD9 /* CGPointExtension.m */; };
+		26F448D01AA91786009D4AD9 /* UIBezierPath+Interpolation.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F448CC1AA91786009D4AD9 /* UIBezierPath+Interpolation.h */; };
+		26F448D11AA91786009D4AD9 /* UIBezierPath+Interpolation.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F448CD1AA91786009D4AD9 /* UIBezierPath+Interpolation.m */; };
 		96492C400FA8AD3400EBA6D2 /* RMGlobalConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B1EB26C610B5D8E6009F8658 /* RMNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EB26C510B5D8E6009F8658 /* RMNotifications.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -231,6 +235,10 @@
 		23A0AAEA0EB90AA6003A4521 /* RMFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMFoundation.h; sourceTree = "<group>"; };
 		25757F4D1291C8640083D504 /* RMCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMCircle.h; sourceTree = "<group>"; };
 		25757F4E1291C8640083D504 /* RMCircle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCircle.m; sourceTree = "<group>"; };
+		26F448CA1AA91786009D4AD9 /* CGPointExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CGPointExtension.h; path = Curvers/CGPointExtension.h; sourceTree = "<group>"; };
+		26F448CB1AA91786009D4AD9 /* CGPointExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CGPointExtension.m; path = Curvers/CGPointExtension.m; sourceTree = "<group>"; };
+		26F448CC1AA91786009D4AD9 /* UIBezierPath+Interpolation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIBezierPath+Interpolation.h"; path = "Curvers/UIBezierPath+Interpolation.h"; sourceTree = "<group>"; };
+		26F448CD1AA91786009D4AD9 /* UIBezierPath+Interpolation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIBezierPath+Interpolation.m"; path = "Curvers/UIBezierPath+Interpolation.m"; sourceTree = "<group>"; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMGlobalConstants.h; sourceTree = "<group>"; };
@@ -431,6 +439,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		26F448C91AA91779009D4AD9 /* CurveMaker */ = {
+			isa = PBXGroup;
+			children = (
+				26F448CA1AA91786009D4AD9 /* CGPointExtension.h */,
+				26F448CB1AA91786009D4AD9 /* CGPointExtension.m */,
+				26F448CC1AA91786009D4AD9 /* UIBezierPath+Interpolation.h */,
+				26F448CD1AA91786009D4AD9 /* UIBezierPath+Interpolation.m */,
+			);
+			name = CurveMaker;
+			sourceTree = "<group>";
+		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
@@ -539,6 +558,7 @@
 		B86F26A80E8742ED007A3773 /* Annotation Layers */ = {
 			isa = PBXGroup;
 			children = (
+				26F448C91AA91779009D4AD9 /* CurveMaker */,
 				160EEDAD13D41DEC007C5501 /* RMAnnotation.h */,
 				160EEDAE13D41DEC007C5501 /* RMAnnotation.m */,
 				DDE357E51651F570001DB842 /* RMPointAnnotation.h */,
@@ -733,6 +753,7 @@
 				DD56B9511961E23F00706C67 /* FMDatabaseAdditions.h in Headers */,
 				B8C974620E8A19E8007D16AD /* RMTileSource.h in Headers */,
 				B8C9746B0E8A1A50007D16AD /* RMMapView.h in Headers */,
+				26F448D01AA91786009D4AD9 /* UIBezierPath+Interpolation.h in Headers */,
 				B8F3FC640EA2E792004D8F85 /* RMMarker.h in Headers */,
 				B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */,
 				B8800FF20EC3A239003E9CDD /* RMMapViewDelegate.h in Headers */,
@@ -787,6 +808,7 @@
 				1656665515A1DF7900EF3DC7 /* RMCoordinateGridSource.h in Headers */,
 				DD5FA1EB15E2B020004EB6C5 /* RMLoadingTileView.h in Headers */,
 				DD41960116250ED40049E6BA /* RMTileCacheDownloadOperation.h in Headers */,
+				26F448CE1AA91786009D4AD9 /* CGPointExtension.h in Headers */,
 				DD4195C9162356900049E6BA /* RMBingSource.h in Headers */,
 				DD56B9571961E23F00706C67 /* FMDB.h in Headers */,
 				DD1E3C6E161F954F004FC649 /* SMCalloutView.h in Headers */,
@@ -928,6 +950,7 @@
 				DD5F5F9618C7C03C0085DE98 /* SMClassicCalloutView.m in Sources */,
 				B8474BA50EB40094006A0BC1 /* RMDatabaseCache.m in Sources */,
 				126693040EB76C0B00E002D5 /* RMConfiguration.m in Sources */,
+				26F448CF1AA91786009D4AD9 /* CGPointExtension.m in Sources */,
 				23A0AAE90EB90A99003A4521 /* RMFoundation.c in Sources */,
 				D1437B36122869E400888DAE /* RMDBMapSource.m in Sources */,
 				25757F501291C8640083D504 /* RMCircle.m in Sources */,
@@ -937,6 +960,7 @@
 				160EEDB013D41DEC007C5501 /* RMAnnotation.m in Sources */,
 				1606C9FF13D86BA400547581 /* RMOpenCycleMapSource.m in Sources */,
 				16FAB66513E03D55002F4E1C /* RMQuadTree.m in Sources */,
+				26F448D11AA91786009D4AD9 /* UIBezierPath+Interpolation.m in Sources */,
 				160E535813FBDB48004F82F9 /* RMMapTiledLayerView.m in Sources */,
 				1609AF8F14068B09008344B7 /* RMMapOverlayView.m in Sources */,
 				DD56B9561961E23F00706C67 /* FMDatabaseQueue.m in Sources */,
