@@ -441,6 +441,14 @@
     [self recalculateGeometryAnimated:NO];
     
     bezierPath =  [UIBezierPath interpolateCGPointsWithHermite:interpolationPoints closed:NO];
+    
+    CABasicAnimation *animateStrokeEnd = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    animateStrokeEnd.duration  = .5;
+    animateStrokeEnd.fromValue = [NSNumber numberWithFloat:0.0f];
+    animateStrokeEnd.toValue   = [NSNumber numberWithFloat:1.0f];
+    animateStrokeEnd.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [shapeLayer addAnimation:animateStrokeEnd forKey:@"strokeEndAnimation"];
+    
     [self setNeedsDisplay];
 }
 
