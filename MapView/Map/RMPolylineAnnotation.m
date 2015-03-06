@@ -47,6 +47,7 @@
         RMShape *shape = [[RMShape alloc] initWithView:self.mapView];
         
         if (self.isCurved) {
+            shape.lineCap = @"round";
             [shape setupWithCoordinatesArray:self.points];
         } else {
             [shape performBatchOperations:^(RMShape *aShape)
