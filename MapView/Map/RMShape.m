@@ -30,6 +30,7 @@
 #import "RMProjection.h"
 #import "RMMapView.h"
 #import "RMAnnotation.h"
+#import "UIBezierPath+Interpolation.h"
 
 @implementation RMShape
 {
@@ -413,6 +414,34 @@
                      controlPoint1:controlProjectedPoint
                      controlPoint2:RMProjectedPointMake((double)INFINITY, (double)INFINITY)
                        withDrawing:YES];
+}
+
+-(void)setupWithCoordinatesArray:(NSArray*)coordinates {
+    NSMutableArray *interpolationPoints = [NSMutableArray array];
+    
+    const char *encoding = @encode(CGPoint);
+    for (CLLocation *location in coordinates) {
+        [points addObject:location]; //Valid
+        RMProjectedPoint projectedPoint =  [[mapView projection] coordinateToProjectedPoint:location.coordinate];
+        
+        if (isFirstPoint) {
+            isFirstPoint = NO;
+            projectedLocation = projectedPoint;
+            self.position = [mapView projectedPointToPixel:projectedLocation];
+        }
+        projectedPoint.x = projectedPoint.x - projectedLocation.x;
+        projectedPoint.y = projectedPoint.y - projectedLocation.y;
+        
+        CGPoint point = CGPointMake(projectedPoint.x, -projectedPoint.y);
+        
+        [interpolationPoints  addObject:[NSValue valueWithBytes:&point objCType:encoding]];
+    }
+    
+    lastScale = 0.0;
+    [self recalculateGeometryAnimated:NO];
+    
+    bezierPath =  [UIBezierPath interpolateCGPointsWithHermite:interpolationPoints closed:NO];
+    [self setNeedsDisplay];
 }
 
 - (void)performBatchOperations:(void (^)(RMShape *aShape))block

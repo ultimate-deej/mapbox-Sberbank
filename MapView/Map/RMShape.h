@@ -87,6 +87,8 @@
 /** An additional pixel area around the shape that is applied to touch hit testing events. Defaults to none. */
 @property (nonatomic, assign) CGFloat additionalTouchPadding;
 
+-(void)setupWithCoordinatesArray:(NSArray*)coordinates;
+
 /** @name Drawing Shapes */
 
 /** Move the drawing pen to a projected point. 
