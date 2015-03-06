@@ -42,19 +42,27 @@
 
 - (RMMapLayer *)layer
 {
-    if ( ! [super layer])
-    {
+    if (self.isCurved) {
         RMShape *shape = [[RMShape alloc] initWithView:self.mapView];
-
-        [shape performBatchOperations:^(RMShape *aShape)
-        {
-            [aShape moveToCoordinate:self.coordinate];
-
-            for (CLLocation *point in self.points)
-                [aShape addLineToCoordinate:point.coordinate];
-        }];
-
+        
+        [shape setupWithCoordinatesArray:self.points];
+        
         super.layer = shape;
+    } else {
+        if ( ! [super layer])
+        {
+            RMShape *shape = [[RMShape alloc] initWithView:self.mapView];
+            
+            [shape performBatchOperations:^(RMShape *aShape)
+             {
+                 [aShape moveToCoordinate:self.coordinate];
+                 
+                 for (CLLocation *point in self.points)
+                     [aShape addLineToCoordinate:point.coordinate];
+             }];
+            
+            super.layer = shape;
+        }
     }
 
     return [super layer];

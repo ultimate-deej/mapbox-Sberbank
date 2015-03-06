@@ -33,4 +33,6 @@
 *   If you wish to customize the layer appearance in more detail, you should instead create an RMAnnotation and configure its layer directly. Providing a layer manually for instances of RMPolylineAnnotation will not have any effect. */
 @interface RMPolylineAnnotation : RMShapeAnnotation
 
+@property (nonatomic, strong) NSNumber *isCurved;
+
 @end
