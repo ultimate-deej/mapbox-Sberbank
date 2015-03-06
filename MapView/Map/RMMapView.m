@@ -3188,6 +3188,10 @@
 
         if (annotation.layer)
         {
+            if ([annotation isKindOfClass:[RMPointAnnotation class]]) {
+                annotation.layer.transform = _annotationTransform;
+            }
+            
             [_overlayView addSublayer:annotation.layer];
             [_visibleAnnotations addObject:annotation];
         }
