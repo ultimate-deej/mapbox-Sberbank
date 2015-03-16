@@ -538,8 +538,11 @@ typedef enum : NSUInteger {
 
 //Darius's methods
 
+-(RMProjectedRect)projectedRectFromLocations:(NSArray*)locations;
+
 -(void)setAngleCorrection:(CGFloat)angle animated:(BOOL)animated;
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
+
 
 @end

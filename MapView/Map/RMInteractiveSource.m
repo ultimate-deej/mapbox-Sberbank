@@ -320,48 +320,33 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 }
 
 -(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map zoomLevel:(short)zoom {
-    const short searchZoomLevel = 22;
-    
-    [map setZoom:zoom animated:YES];
+     const short searchZoomLevel = 22;
     
     [queue inDatabase:^(FMDatabase *db) {
         NSString *query = [NSString stringWithFormat:@"select * from grid_data where key_json like \'%%\"id\":\"%@%%\' and zoom_level=?", shopID];
         FMResultSet *results = [db executeQuery:query withArgumentsInArray:@[@(searchZoomLevel)]];
         
-        int coordinateCount = 0;
-        uint32_t tileX =0, tileY = 0;
-        
+        NSMutableArray *locations = [NSMutableArray array];
         
         while ([results next]) {
-            coordinateCount++;
+            
             NSDictionary *resultDict = [results resultDictionary];
             NSNumber *y = resultDict[@"tile_row"];
             NSNumber *x = resultDict[@"tile_column"];
             
-            tileX += x.unsignedIntValue;
-            tileY += y.unsignedIntValue;
             
+            RMTile tile = RMTileMake(x.unsignedIntValue, y.unsignedIntValue,searchZoomLevel);
+            RMSphericalTrapezium coordinate = [map latitudeLongitudeBoundingBoxForTile:tile];
+            
+            [locations addObject:[[CLLocation alloc] initWithLatitude:-(coordinate.southWest.latitude + coordinate.northEast.latitude) /2 longitude:(coordinate.southWest.longitude + coordinate.northEast.longitude)/2]];
+        }
+        
+        if (locations.count != 0) {
+            RMProjectedRect rect = [map projectedRectFromLocations:locations];
+            [map setProjectedBounds:rect animated:YES];
         }
         
         [results close];
-        
-        if (coordinateCount > 0) {
-            tileX = tileX / coordinateCount;
-            tileY = tileY / coordinateCount;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                RMTile tile = RMTileMake(tileX, tileY,searchZoomLevel);
-                RMSphericalTrapezium coordinates = [map latitudeLongitudeBoundingBoxForTile:tile];
-                
-                CLLocationCoordinate2D southWest = coordinates.southWest;
-                CLLocationCoordinate2D northEast = coordinates.northEast;
-                
-                CLLocationCoordinate2D scrollCoordinates = CLLocationCoordinate2DMake(-(southWest.latitude + northEast.latitude) /2, (southWest.longitude + northEast.longitude)/2);
-                
-                [map setCenterCoordinate:scrollCoordinates animated:YES];
-            });
-            
-        }
     }];
 
 }

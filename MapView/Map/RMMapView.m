@@ -3979,6 +3979,33 @@
                      }];
 }
 
+-(RMProjectedRect)projectedRectFromLocations:(NSArray*)locations {
+    CLLocationCoordinate2D min, max;
+    min.latitude = kRMMaxLatitude; min.longitude = kRMMaxLongitude;
+    max.latitude = kRMMinLatitude; max.longitude = kRMMinLongitude;
+    
+    CLLocationDegrees currentLatitude, currentLongitude;
+    
+    for (CLLocation *currentLocation in locations)
+    {
+        currentLatitude = currentLocation.coordinate.latitude;
+        currentLongitude = currentLocation.coordinate.longitude;
+        
+        // POIs outside of the world...
+        if (currentLatitude < kRMMinLatitude || currentLatitude > kRMMaxLatitude || currentLongitude < kRMMinLongitude || currentLongitude > kRMMaxLongitude)
+            continue;
+        
+        max.latitude  = fmax(currentLatitude, max.latitude);
+        max.longitude = fmax(currentLongitude, max.longitude);
+        min.latitude  = fmin(currentLatitude, min.latitude);
+        min.longitude = fmin(currentLongitude, min.longitude);
+    }
+    
+    RMProjectedPoint first = [[self projection] coordinateToProjectedPoint:min];
+    RMProjectedPoint second = [[self projection] coordinateToProjectedPoint:max];
+    return RMProjectedRectMake(first.x, first.y, second.x - first.x, second.y - first.y);
+}
+
 -(void)setAngleCorrection:(CGFloat)angle animated:(BOOL)animated {
     self.mapAngleCorrection = angle;
     [self setupDefaultScreenTransformAnimated:animated];
