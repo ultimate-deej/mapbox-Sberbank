@@ -1342,15 +1342,15 @@
 
     // add gesture recognizers
 
-    // one finger taps
-    UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
-    doubleTapRecognizer.numberOfTouchesRequired = 1;
-    doubleTapRecognizer.numberOfTapsRequired = 2;
-    doubleTapRecognizer.delegate = self;
+//    // one finger taps
+//    UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+//    doubleTapRecognizer.numberOfTouchesRequired = 1;
+//    doubleTapRecognizer.numberOfTapsRequired = 2;
+//    doubleTapRecognizer.delegate = self;
 
     UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     singleTapRecognizer.numberOfTouchesRequired = 1;
-    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
+//    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
     singleTapRecognizer.delegate = self;
 
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
@@ -1359,7 +1359,7 @@
     longPressRecognizer.delegate = self;
 
     [self addGestureRecognizer:singleTapRecognizer];
-    [self addGestureRecognizer:doubleTapRecognizer];
+//    [self addGestureRecognizer:doubleTapRecognizer];
     [self addGestureRecognizer:longPressRecognizer];
 
     // two finger taps
