@@ -750,7 +750,7 @@
             {
                 dispatch_async(dispatch_get_main_queue(), ^(void)
                 {
-                    if (hasAfterMapZoom)
+                    if (hasBeforeMapZoom)
                         [weakDelegate beforeMapZoom:weakSelf byUser:flag];
                 });
             }];
