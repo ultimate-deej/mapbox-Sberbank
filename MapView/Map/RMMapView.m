@@ -207,7 +207,6 @@
     UIImageView *_logoBug;
 
     RMAnnotation *_currentAnnotation;
-    SMCalloutView *_currentCallout;
 
     BOOL _rotateAtMinZoom;
     NSDate *lastBeaconUpdateLocation;
