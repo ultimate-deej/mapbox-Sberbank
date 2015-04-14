@@ -319,8 +319,10 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
     return NO;
 }
 
--(void)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map zoomLevel:(short)zoom {
-     const short searchZoomLevel = 22;
+-(RMProjectedPoint)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map zoomLevel:(short)zoom {
+    const short searchZoomLevel = 22;
+    
+    __block RMProjectedPoint point = RMProjectedPointMake(0, 0);
     
     [queue inDatabase:^(FMDatabase *db) {
         NSString *query = [NSString stringWithFormat:@"select * from grid_data where key_json like \'%%\"id\":\"%@%%\' and zoom_level=?", shopID];
@@ -343,13 +345,16 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
         
         if (locations.count != 0) {
             RMProjectedRect rect = [map projectedRectFromLocations:locations];
+            rect = RMProjectedRectMake(rect.origin.x - rect.size.width, rect.origin.y - rect.size.height, rect.size.width * 3, rect.size.height * 3);
+            
             [map setProjectedBounds:rect animated:YES];
+            point = RMProjectedPointMake(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2);
         }
         
         [results close];
     }];
-
-}
+    
+    return point;}
 
 - (NSDictionary *)interactivityDictionaryForPoint:(CGPoint)point inMapView:(RMMapView *)mapView;
 {
