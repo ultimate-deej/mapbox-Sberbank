@@ -419,9 +419,14 @@
 -(void)setupWithCoordinatesArray:(NSArray*)coordinates {
     NSMutableArray *interpolationPoints = [NSMutableArray array];
     
+    BOOL werePoints = points.count != 0;
+    isFirstPoint  = YES;
+    
+    points  = [NSMutableArray array];
+    
     const char *encoding = @encode(CGPoint);
     for (CLLocation *location in coordinates) {
-        [points addObject:location]; //Valid
+        [points addObject:location];
         RMProjectedPoint projectedPoint =  [[mapView projection] coordinateToProjectedPoint:location.coordinate];
         
         if (isFirstPoint) {
@@ -429,6 +434,7 @@
             projectedLocation = projectedPoint;
             self.position = [mapView projectedPointToPixel:projectedLocation];
         }
+        
         projectedPoint.x = projectedPoint.x - projectedLocation.x;
         projectedPoint.y = projectedPoint.y - projectedLocation.y;
         
@@ -437,19 +443,20 @@
         [interpolationPoints  addObject:[NSValue valueWithBytes:&point objCType:encoding]];
     }
     
-    lastScale = 0.0;
-    [self recalculateGeometryAnimated:NO force:NO];
-    
     bezierPath =  [UIBezierPath interpolateCGPointsWithHermite:interpolationPoints closed:NO];
     
-    CABasicAnimation *animateStrokeEnd = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    animateStrokeEnd.duration  = .5;
-    animateStrokeEnd.fromValue = [NSNumber numberWithFloat:0.0f];
-    animateStrokeEnd.toValue   = [NSNumber numberWithFloat:1.0f];
-    animateStrokeEnd.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    [shapeLayer addAnimation:animateStrokeEnd forKey:@"strokeEndAnimation"];
+    [self recalculateGeometryAnimated:werePoints force:werePoints];
     
-    [self setNeedsDisplay];
+    if (werePoints == NO) {
+        CABasicAnimation *animateStrokeEnd = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+        animateStrokeEnd.duration  = .5;
+        animateStrokeEnd.fromValue = [NSNumber numberWithFloat:0.0f];
+        animateStrokeEnd.toValue   = [NSNumber numberWithFloat:1.0f];
+        animateStrokeEnd.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        [shapeLayer addAnimation:animateStrokeEnd forKey:@"strokeEndAnimation"];
+        
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)performBatchOperations:(void (^)(RMShape *aShape))block
