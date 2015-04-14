@@ -106,7 +106,7 @@
 
 #pragma mark -
 
-- (void)recalculateGeometryAnimated:(BOOL)animated
+- (void)recalculateGeometryAnimated:(BOOL)animated force:(BOOL)force
 {
     if (ignorePathUpdates)
         return;
@@ -149,7 +149,7 @@
     // we are about to overwrite nonClippedBounds, therefore we save the old value
     CGRect previousNonClippedBounds = nonClippedBounds;
 
-    if (scale != lastScale)
+    if (scale != lastScale || force)
     {
         lastScale = scale;
 
@@ -332,7 +332,7 @@
         }
 
         lastScale = 0.0;
-        [self recalculateGeometryAnimated:NO];
+        [self recalculateGeometryAnimated:NO force:NO];
     }
 
     [self setNeedsDisplay];
@@ -438,7 +438,7 @@
     }
     
     lastScale = 0.0;
-    [self recalculateGeometryAnimated:NO];
+    [self recalculateGeometryAnimated:NO force:NO];
     
     bezierPath =  [UIBezierPath interpolateCGPointsWithHermite:interpolationPoints closed:NO];
     
@@ -459,7 +459,7 @@
     ignorePathUpdates = NO;
 
     lastScale = 0.0;
-    [self recalculateGeometryAnimated:NO];
+    [self recalculateGeometryAnimated:NO force:NO];
 }
 
 #pragma mark - Accessors
@@ -517,7 +517,7 @@
     lineWidth = newLineWidth;
 
     lastScale = 0.0;
-    [self recalculateGeometryAnimated:NO];
+    [self recalculateGeometryAnimated:NO force:NO];
 }
 
 - (NSString *)lineCap
@@ -578,7 +578,7 @@
     if (_fillPatternImage != fillPatternImage)
     {
         _fillPatternImage = fillPatternImage;
-        [self recalculateGeometryAnimated:NO];
+        [self recalculateGeometryAnimated:NO force:NO];
     }
 }
 
@@ -641,7 +641,7 @@
     if (CGPointEqualToPoint(newPosition, super.position) && CGRectEqualToRect(self.bounds, previousBounds))
         return;
 
-    [self recalculateGeometryAnimated:animated];
+    [self recalculateGeometryAnimated:animated force:NO];
 }
 
 - (void)setAnnotation:(RMAnnotation *)newAnnotation
@@ -649,7 +649,7 @@
     if (newAnnotation)
     {
         super.annotation = newAnnotation;
-        [self recalculateGeometryAnimated:NO];
+        [self recalculateGeometryAnimated:NO force:NO];
     }
 }
 
