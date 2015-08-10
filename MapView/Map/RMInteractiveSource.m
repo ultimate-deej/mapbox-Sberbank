@@ -320,13 +320,12 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
 }
 
 -(RMProjectedPoint)scrollToItemByID:(NSString*)shopID inMap:(RMMapView*)map zoomLevel:(short)zoom {
-    const short searchZoomLevel = 22;
     
     __block RMProjectedPoint point = RMProjectedPointMake(0, 0);
     
     [queue inDatabase:^(FMDatabase *db) {
-        NSString *query = [NSString stringWithFormat:@"select * from grid_data where key_json like \'%%\"id\":\"%@%%\' and zoom_level=?", shopID];
-        FMResultSet *results = [db executeQuery:query withArgumentsInArray:@[@(searchZoomLevel)]];
+        NSString *query = [NSString stringWithFormat:@"select * from grid_data where key_json like \'%%\"id\":\"%@\"%%\' and zoom_level=?", shopID];
+        FMResultSet *results = [db executeQuery:query withArgumentsInArray:@[@(zoom)]];
         
         NSMutableArray *locations = [NSMutableArray array];
         
@@ -337,7 +336,7 @@ RMTilePoint RMInteractiveSourceNormalizedTilePointForMapView(CGPoint point, RMMa
             NSNumber *x = resultDict[@"tile_column"];
             
             
-            RMTile tile = RMTileMake(x.unsignedIntValue, y.unsignedIntValue,searchZoomLevel);
+            RMTile tile = RMTileMake(x.unsignedIntValue, y.unsignedIntValue,zoom);
             RMSphericalTrapezium coordinate = [map latitudeLongitudeBoundingBoxForTile:tile];
             
             [locations addObject:[[CLLocation alloc] initWithLatitude:-(coordinate.southWest.latitude + coordinate.northEast.latitude) /2 longitude:(coordinate.southWest.longitude + coordinate.northEast.longitude)/2]];
