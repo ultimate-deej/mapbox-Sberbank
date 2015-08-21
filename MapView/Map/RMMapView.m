@@ -2238,10 +2238,10 @@
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
--(void)removeTileSource:(id<RMTileSource>)tileSource withoutChangingConstraints:(BOOL)without {
+-(void)removeTileSourceAtIndex:(NSUInteger)index withoutChangingConstraints:(BOOL)without {
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
     
-    [_tileSourcesContainer removeTileSource:tileSource];
+    [_tileSourcesContainer removeTileSourceAtIndex:index];
     
     if ([_tileSourcesContainer.tileSources count] == 0)
     {
@@ -2249,24 +2249,13 @@
     }
     else
     {
-        
         if (without == NO) {
-            [self setTileSourcesConstraintsFromLatitudeLongitudeBoundingBox:[_tileSourcesContainer latitudeLongitudeBoundingBox]];
+              [self setTileSourcesConstraintsFromLatitudeLongitudeBoundingBox:[_tileSourcesContainer latitudeLongitudeBoundingBox]];
         }
-        
     }
     
     // Remove the map layer
-    RMMapTiledLayerView *tileSourceTiledLayerView = nil;
-    
-    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
-    {
-        if (tiledLayerView.tileSource == tileSource)
-        {
-            tileSourceTiledLayerView = tiledLayerView;
-            break;
-        }
-    }
+    RMMapTiledLayerView *tileSourceTiledLayerView = [_tiledLayersSuperview.subviews objectAtIndex:index];
     
     tileSourceTiledLayerView.layer.contents = nil;
     [tileSourceTiledLayerView removeFromSuperview];  tileSourceTiledLayerView = nil;
