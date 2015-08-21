@@ -400,6 +400,10 @@ typedef enum : NSUInteger {
 *   @param index The index of the tile source to remove. */
 - (void)removeTileSourceAtIndex:(NSUInteger)index;
 
+/** Remove a tile source from the map view.
+ *   @param tileSource The tile source to remove. */
+-(void)removeTileSource:(id<RMTileSource>)tileSource withoutChangingConstraints:(BOOL)without;
+
 /** Move the tile source at one index to another index. 
 *   @param fromIndex The index of the tile source to move. 
 *   @param toIndex The destination index for the tile source. */

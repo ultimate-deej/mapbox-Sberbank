@@ -2238,6 +2238,42 @@
     [self setCenterProjectedPoint:centerPoint animated:NO];
 }
 
+-(void)removeTileSource:(id<RMTileSource>)tileSource withoutChangingConstraints:(BOOL)without {
+    RMProjectedPoint centerPoint = [self centerProjectedPoint];
+    
+    [_tileSourcesContainer removeTileSource:tileSource];
+    
+    if ([_tileSourcesContainer.tileSources count] == 0)
+    {
+        _constrainMovement = NO;
+    }
+    else
+    {
+        
+        if (without == NO) {
+            [self setTileSourcesConstraintsFromLatitudeLongitudeBoundingBox:[_tileSourcesContainer latitudeLongitudeBoundingBox]];
+        }
+        
+    }
+    
+    // Remove the map layer
+    RMMapTiledLayerView *tileSourceTiledLayerView = nil;
+    
+    for (RMMapTiledLayerView *tiledLayerView in _tiledLayersSuperview.subviews)
+    {
+        if (tiledLayerView.tileSource == tileSource)
+        {
+            tileSourceTiledLayerView = tiledLayerView;
+            break;
+        }
+    }
+    
+    tileSourceTiledLayerView.layer.contents = nil;
+    [tileSourceTiledLayerView removeFromSuperview];  tileSourceTiledLayerView = nil;
+    
+    [self setCenterProjectedPoint:centerPoint animated:NO];
+}
+
 - (void)removeTileSourceAtIndex:(NSUInteger)index
 {
     RMProjectedPoint centerPoint = [self centerProjectedPoint];
