@@ -1284,7 +1284,7 @@
     NSUInteger tileSideLength = [_tileSourcesContainer tileSideLength];
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
-    CGRect mapFrame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.height, self.bounds.size.height);
+     CGRect mapFrame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     _mapScrollView = [[RMMapScrollView alloc] initWithFrame:mapFrame];
     _mapScrollView.center = self.center;
     _mapScrollView.delegate = self;
