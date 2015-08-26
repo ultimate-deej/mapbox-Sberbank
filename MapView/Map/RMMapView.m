@@ -2718,7 +2718,7 @@
         if ([annotation isKindOfClass:[RMPointAnnotation class]] && annotation.isAnnotationVisibleOnScreen)
         {
             [annotation.layer removeFromSuperlayer];
-            annotation.layer = nil;
+            //annotation.layer = nil;
             [_overlayView addSublayer:annotation.layer];
             updatePoints = YES;
         }
@@ -3065,7 +3065,7 @@
                             if (_delegateHasWillHideLayerForAnnotation)
                                 [_delegate mapView:self willHideLayerForAnnotation:annotation];
 
-                            annotation.layer = nil;
+                           // annotation.layer = nil;
                             [_visibleAnnotations removeObject:annotation];
 
                             if (_delegateHasDidHideLayerForAnnotation)
