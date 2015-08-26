@@ -3010,7 +3010,7 @@
                 if (_delegateHasWillHideLayerForAnnotation)
                     [_delegate mapView:self willHideLayerForAnnotation:annotation];
 
-                annotation.layer = nil;
+                //annotation.layer = nil;
 
                 if (_delegateHasDidHideLayerForAnnotation)
                     [_delegate mapView:self didHideLayerForAnnotation:annotation];
